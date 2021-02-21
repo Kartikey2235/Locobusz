@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_id"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/popupMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:backgroundTint="@color/black"
+        android:background="@color/black"
+        app:cardCornerRadius="2dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp">
+
+            <TextView
+                android:id="@+id/itemTextview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enter Details"
+                android:gravity="center"
+                android:layout_marginBottom="10dp"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="25sp"/>
+
+            <EditText
+                android:id="@+id/childName"
+                android:inputType="text"
+                android:hint="Enter Child Name"
+                android:layout_below="@id/itemTextview"
+                android:textColorHint="@android:color/white"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/childRollNo"
+                android:hint="Enter Roll Number"
+                android:inputType="number"
+                android:textColorHint="@android:color/white"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/white"
+                android:layout_below="@id/childName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/childDepartment"
+                android:inputType="text"
+                android:hint="Enter Department"
+                android:layout_below="@id/childRollNo"
+                android:textColorHint="@android:color/white"
+                android:textColor="@color/white"
+                android:focusable="false"
+                android:editable="false"
+                android:clickable="true"
+                android:backgroundTint="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/childDepartmentCode"
+                android:hint="Enter Department Code"
+                android:inputType="number"
+                android:layout_below="@id/childDepartment"
+                android:textColorHint="@android:color/white"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+                <EditText
+                    android:id="@+id/childDateOfBirth"
+                    android:hint="Date of Birth"
+                    android:layout_below="@+id/childDepartmentCode"
+                    android:textColorHint="@android:color/white"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/white"
+                    android:layout_width="match_parent"
+                    android:focusable="false"
+                    android:editable="false"
+                    android:clickable="true"
+                    android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/childGender"
+                android:hint="Gender"
+                android:textColorHint="@android:color/white"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/white"
+                android:layout_width="match_parent"
+                android:focusable="false"
+                android:editable="false"
+                android:clickable="true"
+                android:layout_below="@id/childDateOfBirth"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:textColor="@android:color/white"
+                android:layout_below="@id/childGender" />
+
+            <ImageButton
+                android:id="@+id/crossButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_alignParentEnd="true"
+                android:background="@android:drawable/ic_menu_close_clear_cancel" />
+
+
+        </RelativeLayout>>
+
+    </androidx.cardview.widget.CardView>>
+</LinearLayout>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "891028164359",
+    "project_id": "locobusz",
+    "storage_bucket": "locobusz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:891028164359:android:ff81cc41318128e378bfa2",
+        "android_client_info": {
+          "package_name": "com.example.locobusz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "891028164359-md3jb2lubkv9rh3r37838lhuhd2mmaup.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9-6-YCxjIGfLD84RNQg62d4EA3jCZNFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "891028164359-md3jb2lubkv9rh3r37838lhuhd2mmaup.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

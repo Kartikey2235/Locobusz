@@ -1,11 +1,11 @@
 package com.example.locobusz;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.os.Bundle;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +19,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
@@ -29,39 +34,40 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-// This activity is basically there if there is no data in firebase as well as sql lite it is doing the same work
-
-public class MainActivity extends AppCompatActivity {
+public class Show extends AppCompatActivity {
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
+    private RecyclerView recyclerView;
     private EditText itemName,itemRollNo,itemDepartment,itemDepartmentCode,itemDateOfBirth,itemGender;
     private Button saveButton;
     private ImageButton crossButton;
     private Calendar myCalendar;
+    private RecyclerViewAdapter recyclerViewAdapter;
+    private List<Item> itemList;
     DatabaseHandler databaseHandler;
 
     FirebaseDatabase mDatabase;
     DatabaseReference mDbRef;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_show);
         databaseHandler=new DatabaseHandler(this);
+        recyclerView=findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         mDatabase = FirebaseDatabase.getInstance();
-        mDbRef = mDatabase.getReference("University/Student");
 
-        byPassActivity();
+        itemList=databaseHandler.getAllDetails();
 
-        List<Item> items= databaseHandler.getAllDetails();
-        for(Item item:items){
-            Log.d("kartik", "onCreate: "+item.getName());
-        }
-        FloatingActionButton floatingActionButton=findViewById(R.id.floatingActionButton);
+        Collections.reverse(itemList);
+        FloatingActionButton floatingActionButton=findViewById(R.id.floatingActionButton2);
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,14 +75,12 @@ public class MainActivity extends AppCompatActivity {
                 createPopupDialog();
             }
         });
-    }
 
-    private void byPassActivity() {
-        if(databaseHandler.getCount()>0){
-            startActivity(new Intent(MainActivity.this,Show.class));
-        }
-    }
+        // Setup Adapter
+        recyclerViewAdapter=new RecyclerViewAdapter(this, itemList);
+        recyclerView.setAdapter(recyclerViewAdapter);
 
+    }
     private void createPopupDialog() {
         builder=new AlertDialog.Builder(this);
         View view=getLayoutInflater().inflate(R.layout.popup,null);
@@ -89,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         itemGender=view.findViewById(R.id.childGender);
         crossButton=view.findViewById(R.id.crossButton);
         saveButton=view.findViewById(R.id.saveButton);
+
         itemDepartment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,9 +123,9 @@ public class MainActivity extends AppCompatActivity {
                             case R.id.action_BCOM:
                                 itemDepartment.setText(menuItem.getTitle());
                                 break;
-                            case R.id.action_LLB:
-                                itemDepartment.setText(menuItem.getTitle());
-                                break;
+                                case R.id.action_LLB:
+                                    itemDepartment.setText(menuItem.getTitle());
+                                    break;
                             case R.id.BBA:
                                 itemDepartment.setText(menuItem.getTitle());
                                 break;
@@ -179,13 +184,13 @@ public class MainActivity extends AppCompatActivity {
         itemDateOfBirth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(MainActivity.this, date, myCalendar
+                new DatePickerDialog(Show.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
             }
         });
-
+        saveButton=view.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -195,26 +200,21 @@ public class MainActivity extends AppCompatActivity {
                         && !itemDateOfBirth.getText().toString().isEmpty()&& !itemGender.getText().toString().isEmpty()){
                     saveItem(view);
                 }else{
-                    Snackbar.make(view,"Fill all the details",
-                            Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(view,"Enter all details" +
+                            "", Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
-
-        crossButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
         builder.setView(view);
         dialog=builder.create();
         dialog.show();
     }
-
     private void saveItem(View view) {
+        mDbRef = mDatabase.getReference("University/Student");
+
         Item item=new Item();
+
+        final long[] y = new long[1];
 
         String name=itemName.getText().toString().trim();
         String department=itemDepartment.getText().toString().trim();
@@ -225,38 +225,56 @@ public class MainActivity extends AppCompatActivity {
         Long tsLong = System.currentTimeMillis()/1000;
         String ts = tsLong.toString();
 
-        item.setTimeStamp(ts);
-        item.setRollNo(rollNo);
-        item.setName(name);
-        item.setDepartmentCode(departmentCode);
-        item.setGender(gender);
-        item.setDepartment(department);
-        item.setDateOfBirth(dateOfBirth);
-        item.setId(databaseHandler.getCount());
+                mDbRef.addListenerForSingleValueEvent(new ValueEventListener() { //ref will be your desired path where you want to count children
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() != null) {   // Check for data snapshot has some value
+                dataSnapshot.getChildrenCount(); // check for counts of data snapshot children
 
-        //Setting firebase unique key for Hashmap list
+                    item.setTimeStamp(ts);
+                    item.setRollNo(rollNo);
+                    item.setName(name);
+                    item.setDepartmentCode(departmentCode);
+                    item.setGender(gender);
+                    item.setDepartment(department);
+                    item.setDateOfBirth(dateOfBirth);
+                    item.setId((int) dataSnapshot.getChildrenCount());
+                    //Setting firebase unique key for Hashmap list
+                    String userId = mDbRef.push().getKey();
+                    assert userId != null;
+                    mDbRef.child(userId).setValue(item);
+                    for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                        if(Integer.parseInt(Objects.requireNonNull(ds.child("id").getValue()).toString())>=databaseHandler.getCount()){
+                            Item item=ds.getValue(Item.class);
+                            assert item != null;
+                            databaseHandler.addDetails(item);
+                        }
+                    }
+                }
+            }
 
-        String userId = mDbRef.push().getKey();
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-        assert userId != null;
-        mDbRef.child(userId).setValue(item);
-        databaseHandler.addDetails(item);
+            }
+        });
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
                 dialog.dismiss();
-                Intent intent=new Intent(MainActivity.this,Show.class);
+                Intent intent=new Intent(Show.this,Show.class);
                 startActivity(intent);
                 finish();
             }
         },1200);
     }
+
+
     private void updateLabel() {
         String myFormat = "MM/dd/yy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         itemDateOfBirth.setText(sdf.format(myCalendar.getTime()));
     }
-
 }

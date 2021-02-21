@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+            <item
+                android:id="@+id/action_Male"
+                android:enabled="true"
+                android:title="Male" />
+            <item
+                android:id="@+id/action_Female"
+                android:enabled="true"
+                android:title="Female"/>
+
+            <item
+                android:id="@+id/action_Others"
+                android:enabled="true"
+                android:title="Others" />
+        </menu>
